@@ -77,7 +77,10 @@ HRESULT InitD3D( HWND hWnd )
     g_pd3dDevice->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE );
 
     // Turn on the zbuffer
-    g_pd3dDevice->SetRenderState( D3DRS_ZENABLE, TRUE );
+    // Z버퍼: 픽셀의 깊이 값을 저장하는 버퍼
+    // Z버퍼를 사용하면 멀리있는 객체부터 렌더링한다.
+    // Z버퍼를 사용하지 않으면 생성 순서대로 렌더링되어 앞뒤가 뒤바뀔 수가 있다.
+    g_pd3dDevice->SetRenderState( D3DRS_ZENABLE, FALSE );
 
     return S_OK;
 }
@@ -185,10 +188,18 @@ VOID SetupLights()
     // colors set to yellow. Note that only one material can be used at a time.
     D3DMATERIAL9 mtrl;
     ZeroMemory( &mtrl, sizeof( D3DMATERIAL9 ) );
-    mtrl.Diffuse.r = mtrl.Ambient.r = 1.0f;
-    mtrl.Diffuse.g = mtrl.Ambient.g = 1.0f;
-    mtrl.Diffuse.b = mtrl.Ambient.b = 0.0f;
-    mtrl.Diffuse.a = mtrl.Ambient.a = 1.0f;
+    //Diffuse 반사 색깔 = Material 색상
+    mtrl.Diffuse.r = 1.0f;
+    mtrl.Diffuse.g = 1.0f;
+    mtrl.Diffuse.b = 0.0f;
+    mtrl.Diffuse.a = 1.0f;
+
+    //Ambient 값을 검은색으로 설정하니까 완전히 검게 렌더링됨.
+    mtrl.Ambient.r = 1.0f;
+    mtrl.Ambient.g = 1.0f;
+    mtrl.Ambient.b = 1.0f;
+    mtrl.Ambient.a = 1.0f;
+
     g_pd3dDevice->SetMaterial( &mtrl );
 
     // Set up a white, directional light, with an oscillating direction.
@@ -198,13 +209,17 @@ VOID SetupLights()
     D3DXVECTOR3 vecDir;
     D3DLIGHT9 light;
     ZeroMemory( &light, sizeof( D3DLIGHT9 ) );
+    //광원의 색상 설정
     light.Type = D3DLIGHT_DIRECTIONAL;
-    light.Diffuse.r = 1.0f;
+    light.Diffuse.r = 0.0f;
     light.Diffuse.g = 1.0f;
     light.Diffuse.b = 1.0f;
-    vecDir = D3DXVECTOR3( cosf( timeGetTime() / 350.0f ),
-                          1.0f,
-                          sinf( timeGetTime() / 350.0f ) );
+    //vecDir = D3DXVECTOR3( cosf( timeGetTime() / 350.0f ),
+    //                      1.0f,
+    //                      sinf( timeGetTime() / 350.0f ) );
+
+    //광선 방향
+    vecDir = D3DXVECTOR3(1, -1, 0);//Directional Light로, 태양광 같이 작동함
     D3DXVec3Normalize( ( D3DXVECTOR3* )&light.Direction, &vecDir );
     light.Range = 1000.0f;
     g_pd3dDevice->SetLight( 0, &light );
