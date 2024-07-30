@@ -149,6 +149,10 @@ VOID Cleanup()
 //-----------------------------------------------------------------------------
 VOID SetupMatrices()
 {
+    //렌더링 파이프라인
+    //월드 변환 -> 뷰포트 변환 -> 프로젝션 변환
+
+    // 모델 변환
     // For our world matrix, we will just rotate the object about the y-axis.
     D3DXMATRIXA16 matWorld;
 
@@ -161,6 +165,7 @@ VOID SetupMatrices()
     D3DXMatrixRotationY( &matWorld, fAngle );
     g_pd3dDevice->SetTransform( D3DTS_WORLD, &matWorld );
 
+    //뷰 변환
     // Set up our view matrix. A view matrix can be defined given an eye point,
     // a point to lookat, and a direction for which way is up. Here, we set the
     // eye five units back along the z-axis and up three units, look at the
@@ -172,6 +177,7 @@ VOID SetupMatrices()
     D3DXMatrixLookAtLH( &matView, &vEyePt, &vLookatPt, &vUpVec );
     g_pd3dDevice->SetTransform( D3DTS_VIEW, &matView );
 
+    //프로젝션 변환
     // For the projection matrix, we set up a perspective transform (which
     // transforms geometry from 3D view space to 2D viewport space, with
     // a perspective divide making objects smaller in the distance). To build
@@ -209,7 +215,11 @@ VOID Render()
         g_pd3dDevice->EndScene();
     }
 
-    // Present the backbuffer contents to the display
+    //Present 함수 기능
+    //1.이중 버퍼링 기능 실행 : 깜빡임 현상을 방지하기 위한 작업으로 백 버퍼를 프론트 버퍼와 교체한다.
+    //-> 교체된 프론트 버퍼는 백 버퍼의 역할을 수행함.
+    //2. GPU와 디스플레이 동기화를 통해 화면 찢어짐 현상 방지. 수직 동기화라고 함.
+
     g_pd3dDevice->Present( NULL, NULL, NULL, NULL );
 }
 
