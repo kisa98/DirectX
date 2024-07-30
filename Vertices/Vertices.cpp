@@ -106,7 +106,7 @@ HRESULT InitVB()
 
     //컬링 모드를 설정하지 않으면 기본적으로 CCW, 시계 반대방향으로 그려진 삼각형이 뒷면으로 처리되어 컬링된다.
     //g_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-    //g_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW); 위 삼각형은 시계방향으로 정의되어, 컬링 모드가 D3DCULL_CW일 때, 보이지 않는다.
+    g_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW); //위 삼각형은 시계방향으로 정의되어, 컬링 모드가 D3DCULL_CW일 때, 보이지 않는다.
 
 
     // Now we fill the vertex buffer. To do this, we need to Lock() the VB to
